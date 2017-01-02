@@ -1,20 +1,21 @@
 package source;
-
-public class Items {
+/**
+ * Created by Artur Artir Markowski on 2017-01-02.
+ */
+class Item {
 	private String name = " ";
 	private int weight = 0;
 	private int amount = 0;
 	private String note = " ";
 
-	public Items(String name, int weight, int amount) {
+	Item(String name, int weight, int amount) {
 		super();
 		this.name = name;
 		this.weight = weight;
 		this.amount = amount;
-		this.note = " ";
 	}
 
-	public Items(String name, int weight, int amount, String note) {
+	Item(String name, int weight, int amount, String note) {
 		super();
 		this.name = name;
 		this.weight = weight;
@@ -22,39 +23,39 @@ public class Items {
 		this.note = note;
 	}
 
-	public int totalWeight() {
+	int totalWeight() {
 		return weight * amount;
 	}
 
-	public String getName() {
+	String getName() {
 		return name;
 	}
 
-	public void setName(String name) {
+	void setName(String name) {
 		this.name = name;
 	}
 
-	public int getWeight() {
+	int getWeight() {
 		return weight;
 	}
 
-	public void setWeight(int weight) {
+	void setWeight(int weight) {
 		this.weight = weight;
 	}
 
-	public int getAmount() {
+	int getAmount() {
 		return amount;
 	}
 
-	public void setAmount(int amount) {
+	void setAmount(int amount) {
 		this.amount = amount;
 	}
 
-	public String getNote() {
+	String getNote() {
 		return note;
 	}
 
-	public void setNote(String note) {
+	void setNote(String note) {
 		this.note = note;
 	}
 }
