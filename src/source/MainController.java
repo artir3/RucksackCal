@@ -2,19 +2,19 @@ package source;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.control.Label;
-import javafx.scene.control.ListView;
-import javafx.scene.control.TextArea;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.layout.BorderPane;
 import source.model.BagDataTxt;
 import source.model.BagItem;
 
 import java.io.IOException;
 
-
 public class MainController {
     private BagDataTxt singleton;
+    @FXML
+    public MenuItem exitMenu;
+    @FXML
+    public Menu helpMenu;
     @FXML
     private ListView<BagItem> itemsList;
     @FXML
@@ -26,40 +26,47 @@ public class MainController {
     @FXML
     private TextArea noteField;
     @FXML
-    private BorderPane mainPane;
-    @FXML
     private Label totalWeightLabel;
+    @FXML
+    public BorderPane mainPane;
 
     public MainController() {
+        mainPane = new BorderPane();
         this.singleton = BagDataTxt.getInstance();
+        itemsList = new ListView<BagItem>();
+        singleton.addItem("Plecaczek", "1200", "1", "nicość");
+        singleton.addItem("śpiwor", "900", "1", "zimno");
+        singleton.addItem("karimata", "300", "1", "twardo :(");
+        singleton.addItem("woda", "1500", "2", "ciężko");
     }
 
-    public void init(){
-        itemsList.setItems(singleton.getBagList());
-
-//        itemsList.getSelectionModel().getSelectedItems().addListener(observable -> {
-//        });
+    public void initialize() {
+        itemsList.setItems(singleton.getBagList().sorted());
+        totalWeightLabel.setText(singleton.getTotalWeightG());
+        reloadTotalWeightInKG();
         loadSelectedItem();
-        totalWeightLabel.setText(singleton.getTotalWeight());
+    }
+
+    private void loadSelectedItem() {
+        if (!itemsList.getSelectionModel().isEmpty()) {
+            BagItem item = itemsList.getSelectionModel().getSelectedItem();
+            nameField.setText(item.getName());
+            weightField.setText(item.getWeight());
+            amountField.setText(item.getAmount());
+            noteField.setText(item.getNote());
+        }
     }
 
     @FXML
-    public void addNewItem(){
-        singleton.addItem(nameField.getText(),weightField.getText(),amountField.getText(),noteField.getText());
-        totalWeightLabel.setText(singleton.getTotalWeight()+"g");
+    public void addNewItem() {
+        singleton.addItem(nameField.getText(), weightField.getText(), amountField.getText(), noteField.getText());
+        reloadTotalWeightInKG();
     }
 
     @FXML
-    public void deleteItem(){
+    public void deleteItem() {
         singleton.deleteItem(itemsList.getSelectionModel().getSelectedItem());
-    }
-
-    private void loadSelectedItem(){
-        BagItem item = itemsList.getSelectionModel().getSelectedItem();
-        nameField.setText(item.getName());
-        weightField.setText(item.getWeight());
-        amountField.setText(item.getAmount());
-        noteField.setText(item.getNote());
+        reloadTotalWeightInKG();
     }
 
     @FXML
@@ -70,10 +77,10 @@ public class MainController {
 
     @FXML
     public void saveMenu(ActionEvent actionEvent) {
-         try {
-             if (singleton.isFile)
-            singleton.saveItemData();
-             else saveToMenu(actionEvent);
+        try {
+            if (singleton.isFile)
+                singleton.saveItemData();
+            else saveToMenu(actionEvent);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -96,5 +103,13 @@ public class MainController {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    private void reloadTotalweightInG() {
+        totalWeightLabel.setText(singleton.getTotalWeightG() + "g");
+    }
+
+    private void reloadTotalWeightInKG() {
+        totalWeightLabel.setText(singleton.getTotalWeightKG() + "kg");
     }
 }

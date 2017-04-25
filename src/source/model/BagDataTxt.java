@@ -20,11 +20,11 @@ public class BagDataTxt implements BagData {
     public boolean isFile;
 
     private BagDataTxt() {
-        bagListData = FXCollections.observableArrayList();
+        this.bagListData = FXCollections.observableArrayList();
 
-        totalWeight = 0;
-        isFile = false;
-        fileName = "test.txt";
+        this.totalWeight = 0;
+        this.isFile = false;
+        this.fileName = "test.txt";
     }
 
     public static BagDataTxt getInstance() {
@@ -41,11 +41,16 @@ public class BagDataTxt implements BagData {
         this.isFile = true;
     }
 
-    public String getTotalWeight() {
+    public String getTotalWeightG() {
         return Integer.toString(totalWeight);
     }
 
+    public String getTotalWeightKG() {
+        return String.format("%.3f",((double)totalWeight/1000));
+    }
+
     private void calculateTotalWeight() {
+        totalWeight = 0;
         for (BagItem temp : bagListData) {
             totalWeight += temp.getTotalWeight();
         }
@@ -54,19 +59,25 @@ public class BagDataTxt implements BagData {
     @Override
     public void addItem(BagItem bagItem) {
         bagListData.add(bagItem);
-        calculateTotalWeight();
+        totalWeight += bagItem.getTotalWeight();
     }
 
     @Override
     public void addItem(String name, String weight, String amount, String note) {
-        bagListData.add(new BagItem
-                .Builder(name)
-                .weight(weight)
-                .amount(amount)
-                .note(note)
-                .build());
-        calculateTotalWeight();
+        bagListData.add(new BagItem(name,Integer.parseInt(weight),Integer.parseInt(amount),note));
+        totalWeight += (Integer.parseInt(amount) * Integer.parseInt(weight));
     }
+
+    //    @Override
+//    public void addItem(String name, String weight, String amount, String note) {
+//        bagListData.add(new BagItem
+//                .Builder(name)
+//                .weight(weight)
+//                .amount(amount)
+//                .note(note)
+//                .build());
+//        calculateTotalWeight();
+//    }
 
     @Override
     public void deleteItem(BagItem bagItem) {
