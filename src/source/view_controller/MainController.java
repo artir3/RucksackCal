@@ -1,9 +1,8 @@
-package source;
+package source.view_controller;
 
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
 import javafx.scene.control.*;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.FileChooser;
@@ -16,8 +15,6 @@ import java.io.IOException;
 public class MainController {
     private BagDataTxt singleton;
 
-    @FXML
-    public Menu helpMenu;
     @FXML
     private ListView<BagItem> itemsList;
     @FXML
@@ -210,8 +207,9 @@ public class MainController {
         String tekst = "Aplikacja RugsackCal powstała w celu szybkiego tworzenia listy przedmiotów które zabiera się ze sobą na wyprawy, przejażdżki czy wyjazdy. \n\n" +
                 "Aplikacja automatycznie liczy wagę całego bagażu, który wpisaliśmy, co pozwala nam na łatwe kontrolowanie tego co można zabrać ze sobą, co jest " +
                 "bardzo pomocne przy bagażu podręcznym przy przelotach samolotem.\n\n" +
-                "RugsackCal. Wersja: 0.2.9.280417. \n" +
-                "Autor: Artur Markowski\n";
+                "RugsackCal. Wersja: 0.2.9.280417\n" +
+                "Autor: Artur Markowski\n" +
+                "Email: markowski.artur@outlook.com\n";
         alert.setContentText(tekst);
         alert.showAndWait();
 
