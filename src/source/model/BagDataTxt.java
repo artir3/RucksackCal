@@ -45,6 +45,11 @@ public class BagDataTxt implements BagData {
     }
 
     @Override
+    public void editItem(BagItem oldBagItem, String name, String weight, String amount, String note) {
+        bagListData.get(bagListData.indexOf(oldBagItem)).editBody(name, weight, amount, note);
+    }
+
+    @Override
     public void addItem(BagItem bagItem) {
         bagListData.add(bagItem);
         totalWeight += bagItem.getTotalWeight();
@@ -52,7 +57,7 @@ public class BagDataTxt implements BagData {
 
     @Override
     public void addItem(String name, String weight, String amount, String note) {
-        bagListData.add(new BagItem(name, Integer.parseInt(weight), Integer.parseInt(amount), note));
+        bagListData.add(new BagItem(name, weight, amount, note));
         totalWeight += (Integer.parseInt(amount) * Integer.parseInt(weight));
     }
     //    @Override
@@ -81,7 +86,7 @@ public class BagDataTxt implements BagData {
             bw.write(String.format("%s\t%s\t%s\t%s", item.getName(),
                     item.getWeight(),
                     item.getAmount(),
-                    item.getNote().equals("")?" ":item.getNote()));
+                    item.getNote().equals("") ? " " : item.getNote()));
             bw.newLine();
         }
     }
@@ -95,7 +100,7 @@ public class BagDataTxt implements BagData {
             String m_name = itemsPieces[0];
             String m_weight = itemsPieces[1];
             String m_amount = itemsPieces[2];
-            String m_note = itemsPieces[3];
+            String m_note = itemsPieces[3].equals(" ")?"":itemsPieces[3];
             addItem(m_name, m_weight, m_amount, m_note);
         }
         br.close();
@@ -109,7 +114,7 @@ public class BagDataTxt implements BagData {
     }
 
     @Override
-    public boolean isFile(){
+    public boolean isFile() {
         return file != null;
     }
 }

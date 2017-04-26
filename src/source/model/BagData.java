@@ -10,6 +10,9 @@ interface BagData {
 
     void deleteItem(BagItem bagItem);
 
+
+    void editItem(BagItem oldBagItem, String name, String weight, String amount, String note);
+
     void saveItemData() throws IOException;
 
     void loadItemData() throws IOException;
