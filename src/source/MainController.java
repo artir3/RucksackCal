@@ -1,18 +1,20 @@
 package source;
 
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.layout.BorderPane;
+import javafx.stage.FileChooser;
 import source.model.BagDataTxt;
 import source.model.BagItem;
 
+import java.io.File;
 import java.io.IOException;
 
 public class MainController {
     private BagDataTxt singleton;
-    @FXML
-    public MenuItem exitMenu;
+
     @FXML
     public Menu helpMenu;
     @FXML
@@ -28,33 +30,32 @@ public class MainController {
     @FXML
     private Label totalWeightLabel;
     @FXML
-    public BorderPane mainPane;
+    public BorderPane mainPane = new BorderPane();
 
     public MainController() {
-        mainPane = new BorderPane();
         this.singleton = BagDataTxt.getInstance();
-        itemsList = new ListView<BagItem>();
-        singleton.addItem("Plecaczek", "1200", "1", "nicość");
-        singleton.addItem("śpiwor", "900", "1", "zimno");
-        singleton.addItem("karimata", "300", "1", "twardo :(");
-        singleton.addItem("woda", "1500", "2", "ciężko");
+        itemsList = new ListView<>();
     }
 
     public void initialize() {
         itemsList.setItems(singleton.getBagList().sorted());
         totalWeightLabel.setText(singleton.getTotalWeightG());
+        loadSelectedItem();
         reloadTotalWeightInKG();
         loadSelectedItem();
     }
 
     private void loadSelectedItem() {
-        if (!itemsList.getSelectionModel().isEmpty()) {
-            BagItem item = itemsList.getSelectionModel().getSelectedItem();
-            nameField.setText(item.getName());
-            weightField.setText(item.getWeight());
-            amountField.setText(item.getAmount());
-            noteField.setText(item.getNote());
-        }
+        itemsList.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
+            if (!itemsList.getSelectionModel().isEmpty()) {
+                BagItem item = itemsList.getSelectionModel().getSelectedItem();
+                nameField.setText(item.getName());
+                weightField.setText(item.getWeight());
+                amountField.setText(item.getAmount());
+                noteField.setText(item.getNote());
+            }
+        });
+
     }
 
     @FXML
@@ -71,22 +72,58 @@ public class MainController {
 
     @FXML
     public void saveChangesMenu(ActionEvent actionEvent) {
-        deleteItem();
+        if (!itemsList.getSelectionModel().isEmpty()) {
+            deleteItem();
+        }
         addNewItem();
     }
 
     @FXML
-    public void saveMenu(ActionEvent actionEvent) {
+    public void saveMenu() {
         try {
-            if (singleton.isFile)
+            if (singleton.isFile())
                 singleton.saveItemData();
-            else saveToMenu(actionEvent);
+            else saveToMenu();
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
-    public void saveToMenu(ActionEvent actionEvent) {
+    @FXML
+    public void saveToMenu() {
+        try {
+            singleton.setFile(chosePathToSaveFile());
+            if (singleton.isFile()) saveMenu();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    @FXML
+    public void openMenu(ActionEvent actionEvent) {
+        try {
+            singleton.setFile(chosePathToOpenFile());
+            if (singleton.isFile()) singleton.loadItemData();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        reloadTotalWeightInKG();
+    }
+
+    private File chosePathToOpenFile() throws Exception {
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("Open file with your bag.");
+        fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Text File", "*.txt"));
+        return fileChooser.showOpenDialog(mainPane.getScene().getWindow());
+    }
+
+    private File chosePathToSaveFile() throws Exception {
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("Save your bag to file.");
+        fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Text File", "*.txt"));
+        return fileChooser.showSaveDialog(mainPane.getScene().getWindow());
     }
 
     @FXML
@@ -97,19 +134,17 @@ public class MainController {
         noteField.clear();
     }
 
-    public void openMenu(ActionEvent actionEvent) {
-        try {
-            singleton.loadItemData();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
     private void reloadTotalweightInG() {
         totalWeightLabel.setText(singleton.getTotalWeightG() + "g");
     }
 
     private void reloadTotalWeightInKG() {
         totalWeightLabel.setText(singleton.getTotalWeightKG() + "kg");
+    }
+
+    @FXML
+    public void exitMenu(ActionEvent actionEvent) {
+        Platform.exit();
+        System.exit(0);
     }
 }
